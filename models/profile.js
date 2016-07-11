@@ -1,0 +1,23 @@
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema;
+
+var ProfileSchema = new Schema({
+    name: String,
+    github_link: String,
+    github_profile_image: String,
+    current_city: String,
+    school: [
+      {University: String, Degree: String, fieldOfStudy: String},
+      {University: String, Degree: String, fieldOfStudy: String},
+    ],
+    family_members: [
+      {name: String, relationship: String},
+      {name: String, relationship: String},
+      {name: String, relationship: String},
+      {name: String, relationship: String},
+    ]
+  });
+
+var Profile = mongoose.model('Profile', ProfileSchema);
+
+module.exports = Profile;
