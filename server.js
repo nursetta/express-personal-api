@@ -5,6 +5,7 @@ var express = require('express'),
 // parse incoming urlencoded form data
 // and populate the req.body object
 var bodyParser = require('body-parser');
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 /************
@@ -37,15 +38,19 @@ app.get('/api', function api_index(req, res) {
   // TODO: Document all your api endpoints below
   res.json({
     message: "Welcome to my personal api! Here's what you need to know!",
-    documentation_url: "https://github.com/example-username/express_self_api/README.md", // CHANGE ME
-    base_url: "http://YOUR-APP-NAME.herokuapp.com", // CHANGE ME
+    documentation_url: "https://github.com/nursetta/express-personal-api", 
+    base_url: "",
     endpoints: [
       {method: "GET", path: "/api", description: "Describes all available endpoints"},
-      {method: "GET", path: "/api/profile", description: "Profile page about me"}, // CHANGE ME
-      {method: "GET", path: "/api/movie", description: "Shows a json list of all my favorite movies"} // CHANGE ME
+      {method: "GET", path: "/api/profile", description: "Displays information about me"}, 
+      {method: "GET", path: "/api/movie/:id", description: "Find one favorite movie"},
+      {method: "POST", path: "/api/movie", description: "Add a new favorite Movie"},
+      {method: "PUT", path: "/api/movie/:id", description: "Update one of my favorite movies"},
+      {method: "DELETE", path: "/api/movie/:id", description: "Deletes search an individual movie by ID"}
     ]
   });
 });
+
 
 //get all profile info
 app.get('/api/profile', function (req, res) {
@@ -76,7 +81,7 @@ app.get('/api/movie/:id', function(req, res) {
 });
 
 //CREATE Method
-app.post('/api/movie', function create(req, res) {
+app.post('/api/movie', function (req, res) {
 var newMovie = new db.Movie({
   movieTitle: req.body.movieTitle,
   director: req.body.director,
@@ -84,16 +89,16 @@ var newMovie = new db.Movie({
   rottenTomatoeRating: req.body.rottenTomatoeRating,
   link: req.body.link,
 });
-  newMovie.save(function(err, movie) {
-    if (err) {
-      return console.log("error: ", + err);
-    } console.log("created ", movie.movieTitle);
-    res.json(movie);
-  });
+    newMovie.save(function(err, movies){
+      if (err) {
+        return console.log("save error: " + err);
+      }
+      console.log("saved ", movies.movieTitle);
+      res.json(movies);
+    });
 });
 
-
-// delete movie
+//DELETE Method
 app.delete('/api/movie/:id', function (req, res) {
   // get movie id from url params (`req.params`)
   console.log('movie delete', req.params);
@@ -103,8 +108,8 @@ app.delete('/api/movie/:id', function (req, res) {
     res.json(deletedMovie);
   });
 });
- 
-// Update Movie
+
+//PUT Method 
 app.put('/api/movie/:id', function (req, res) {
  var movieId = req.params.id;
  var update = req.body;
